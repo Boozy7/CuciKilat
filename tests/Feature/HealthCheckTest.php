@@ -39,4 +39,13 @@ class HealthCheckTest extends TestCase
 
         $this->assertStringNotContainsString('secret_user', $response->getContent());
     }
+
+    public function test_health_route_is_stateless_and_excludes_web_session_middleware(): void
+    {
+        $healthRoute = collect(app('router')->getRoutes()->getRoutes())
+            ->first(fn ($r) => $r->uri() === 'health');
+
+        $this->assertNotNull($healthRoute);
+        $this->assertContains('web', $healthRoute->excludedMiddleware());
+    }
 }
