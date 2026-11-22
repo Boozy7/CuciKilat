@@ -1,0 +1,57 @@
+services:
+  app:
+    image: boozy7/cucikilat:latest
+    container_name: cucikilat-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      APP_NAME: "CuciKilat"
+      APP_ENV: production
+      APP_KEY: ${APP_KEY:-base64:cuciKilatSecretKeyForDevOpsTubes123456=}
+      APP_DEBUG: "false"
+      APP_URL: "http://localhost:${APP_PORT:-8000}"
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-cucikilat}
+      DB_USERNAME: ${DB_USERNAME:-cucikilat_user}
+      DB_PASSWORD: ${DB_PASSWORD:-cucikilat_secret}
+      RUN_MIGRATIONS: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - public_net
+      - backend
+
+  db:
+    image: mysql:8.0
+    container_name: cucikilat-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-cucikilat}
+      MYSQL_USER: ${DB_USERNAME:-cucikilat_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-cucikilat_secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_cucikilat_2026}
+    volumes:
+      - cucikilat_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_cucikilat_2026}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend
+
+volumes:
+  cucikilat_db_data:
+    driver: local
+
+networks:
+  public_net:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
