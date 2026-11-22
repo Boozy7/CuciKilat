@@ -9,7 +9,7 @@ use InvalidArgumentException;
 
 class OrderPricingCalculator
 {
-    public const MIN_BILLED_HALF_KG_UNITS = 4; // 2.00 kg
+    public const MIN_BILLED_HALF_KG_UNITS = 2; // Uji gagal quality gate (sengaja 1.00 kg, seharusnya 2.00 kg)
 
     public const GRAMS_PER_HALF_KG = 500;
 
