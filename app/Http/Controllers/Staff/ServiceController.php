@@ -8,20 +8,26 @@ use App\Http\Requests\UpdateServiceRequest;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\View\View;
 
 class ServiceController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(): AnonymousResourceCollection|View
     {
         $services = Service::query()
             ->orderBy('id')
             ->get();
 
-        return ServiceResource::collection($services);
+        if (request()->expectsJson()) {
+            return ServiceResource::collection($services);
+        }
+
+        return view('staff.services.index', compact('services'));
     }
 
-    public function store(StoreServiceRequest $request): JsonResponse
+    public function store(StoreServiceRequest $request): JsonResponse|RedirectResponse
     {
         $validated = $request->validated();
 
@@ -35,43 +41,71 @@ class ServiceController extends Controller
             'is_active' => $validated['is_active'] ?? true,
         ]);
 
-        return (new ServiceResource($service))
-            ->additional(['message' => 'Layanan berhasil ditambahkan.'])
-            ->response()
-            ->setStatusCode(201);
+        if ($request->expectsJson()) {
+            return (new ServiceResource($service))
+                ->additional(['message' => 'Layanan berhasil ditambahkan.'])
+                ->response()
+                ->setStatusCode(201);
+        }
+
+        return redirect()
+            ->route('staff.services.index')
+            ->with('success', 'Layanan berhasil ditambahkan.');
     }
 
-    public function show(Service $service): ServiceResource
+    public function show(Service $service): ServiceResource|View
     {
-        return new ServiceResource($service);
+        if (request()->expectsJson()) {
+            return new ServiceResource($service);
+        }
+
+        return view('staff.services.show', compact('service'));
     }
 
-    public function update(UpdateServiceRequest $request, Service $service): ServiceResource
+    public function update(UpdateServiceRequest $request, Service $service): ServiceResource|RedirectResponse
     {
         $service->fill($request->validated());
         $service->save();
 
-        return (new ServiceResource($service->refresh()))
-            ->additional(['message' => 'Layanan berhasil diperbarui.']);
+        if ($request->expectsJson()) {
+            return (new ServiceResource($service->refresh()))
+                ->additional(['message' => 'Layanan berhasil diperbarui.']);
+        }
+
+        return redirect()
+            ->route('staff.services.index')
+            ->with('success', 'Layanan berhasil diperbarui.');
     }
 
-    public function destroy(Service $service): JsonResponse
+    public function destroy(Service $service): JsonResponse|RedirectResponse
     {
         if ($service->orders()->exists()) {
             $service->update(['is_active' => false]);
 
-            return response()->json([
-                'action' => 'deactivated',
-                'message' => 'Layanan sudah dipakai pada riwayat order sehingga dinonaktifkan (is_active = false) untuk menjaga riwayat transaksi.',
-                'data' => new ServiceResource($service->refresh()),
-            ]);
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'action' => 'deactivated',
+                    'message' => 'Layanan sudah dipakai pada riwayat order sehingga dinonaktifkan (is_active = false) untuk menjaga riwayat transaksi.',
+                    'data' => new ServiceResource($service->refresh()),
+                ]);
+            }
+
+            return redirect()
+                ->route('staff.services.index')
+                ->with('success', 'Layanan sudah memiliki riwayat order sehingga dinonaktifkan.');
         }
 
         $service->delete();
 
-        return response()->json([
-            'action' => 'deleted',
-            'message' => 'Layanan berhasil dihapus.',
-        ]);
+        if (request()->expectsJson()) {
+            return response()->json([
+                'action' => 'deleted',
+                'message' => 'Layanan berhasil dihapus.',
+            ]);
+        }
+
+        return redirect()
+            ->route('staff.services.index')
+            ->with('success', 'Layanan berhasil dihapus.');
     }
 }

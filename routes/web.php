@@ -8,10 +8,7 @@ use App\Http\Controllers\Staff\ServiceController as StaffServiceController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+// Health check endpoint (stateless, excluded from web middleware)
 Route::get('/health', function () {
     try {
         DB::select('SELECT 1');
@@ -28,10 +25,14 @@ Route::get('/health', function () {
     }
 })->withoutMiddleware('web');
 
-// Public customer endpoints
+// Customer / Public pages and endpoints
+Route::get('/', [PublicOrderController::class, 'home'])->name('home');
+Route::get('/orders/create', [PublicOrderController::class, 'create'])->name('orders.create');
+Route::get('/orders/success/{orderCode}', [PublicOrderController::class, 'orderSuccess'])->name('orders.success');
+Route::get('/track', [PublicOrderController::class, 'trackForm'])->name('orders.track.form');
+Route::get('/track/{orderCode}', [PublicOrderController::class, 'track'])->name('orders.track');
 Route::get('/services', [PublicOrderController::class, 'services'])->name('services.public');
 Route::post('/orders', [PublicOrderController::class, 'store'])->name('orders.store');
-Route::get('/track/{orderCode}', [PublicOrderController::class, 'track'])->name('orders.track');
 
 // Staff authentication
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
