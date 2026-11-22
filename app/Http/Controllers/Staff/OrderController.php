@@ -75,7 +75,7 @@ class OrderController extends Controller
 
         return redirect()
             ->route('staff.orders.show', $order)
-            ->with('success', 'Status order berhasil diperbarui ke: ' . $targetStatus->label());
+            ->with('success', 'Status order berhasil diperbarui ke: '.$targetStatus->label());
     }
 
     public function weigh(
@@ -116,6 +116,6 @@ class OrderController extends Controller
 
         return redirect()
             ->route('staff.orders.show', $order)
-            ->with('success', 'Status pembayaran berhasil diperbarui ke: ' . $targetPaymentStatus->label());
+            ->with('success', 'Status pembayaran berhasil diperbarui ke: '.$targetPaymentStatus->label());
     }
 }

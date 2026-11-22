@@ -52,12 +52,24 @@ FROM dependencies AS test
 
 COPY . .
 
-ENV APP_ENV=testing \
-    DB_CONNECTION=sqlite \
-    DB_DATABASE=:memory:
+RUN rm -f bootstrap/cache/*.php \
+    && mkdir -p storage/framework/cache/data \
+                storage/framework/sessions \
+                storage/framework/views \
+                storage/logs \
+                bootstrap/cache \
+    && touch .env \
+    && php artisan package:discover --ansi
 
-# Jalankan seluruh unit & feature test otomatis
-RUN php artisan test
+# Jalankan seluruh unit & feature test otomatis pada SQLite in-memory dengan dummy key khusus CI
+RUN APP_ENV=testing \
+    APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+    DB_CONNECTION=sqlite \
+    DB_DATABASE=:memory: \
+    SESSION_DRIVER=array \
+    CACHE_STORE=array \
+    QUEUE_CONNECTION=sync \
+    php artisan test
 
 # ==========================================
 # STAGE 5: Production Runner (Final Image)
@@ -71,13 +83,21 @@ RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoload
 # Copy application source code
 COPY . .
 
-# Set permissions for Laravel storage & cache
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
+# Prepare Laravel directories, clean stale cache, discover prod packages, and set permissions
+RUN rm -f /app/bootstrap/cache/*.php \
+    && mkdir -p /app/storage/framework/cache/data \
+                /app/storage/framework/sessions \
+                /app/storage/framework/views \
+                /app/storage/logs \
+                /app/bootstrap/cache \
+    && php artisan package:discover --ansi \
+    && chown -R www-data:www-data /app/storage /app/bootstrap/cache \
     && chmod -R 775 /app/storage /app/bootstrap/cache
 
-# Copy entrypoint script
+# Copy entrypoint script (pastikan LF agar aman dari checkout Windows)
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
+    && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 8000
 

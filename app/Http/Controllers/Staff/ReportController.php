@@ -30,8 +30,8 @@ class ReportController extends Controller
         return view('staff.reports.daily-revenue', [
             'date' => $report['date'],
             'timezone' => $report['timezone'],
-            'total_revenue' => $report['total_revenue'],
-            'paid_orders_count' => $report['paid_orders_count'],
+            'totalRevenue' => $report['total_revenue'],
+            'paidOrdersCount' => $report['paid_orders_count'],
             'orders' => $report['orders'],
         ]);
     }

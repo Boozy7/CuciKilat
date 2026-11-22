@@ -13,28 +13,28 @@ pipeline {
             }
         }
 
-        // Tantangan DevOps K06: Stage Lint sebelum Test (Quality Gate Pint)
+        // Tantangan DevOps K06: Stage Lint sebelum Test (Quality Gate Pint di dalam container)
         stage('Lint') {
             steps {
-                sh 'docker build --target lint -t $IMAGE:lint .'
+                bat 'docker build --target lint -t %IMAGE%:lint .'
             }
         }
 
-        // Automated Testing Quality Gate (Semua test wajib hijau)
+        // Automated Testing Quality Gate (Semua unit & feature test wajib hijau)
         stage('Test') {
             steps {
-                sh 'docker build --target test -t $IMAGE:test .'
+                bat 'docker build --target test -t %IMAGE%:test .'
             }
         }
 
         // Build Production Docker Image dengan 2 tag (BUILD_NUMBER & latest)
         stage('Build Image') {
             steps {
-                sh 'docker build --target runner -t $IMAGE:$TAG -t $IMAGE:latest .'
+                bat 'docker build --target runner -t %IMAGE%:%TAG% -t %IMAGE%:latest .'
             }
         }
 
-        // Push Image ke Docker Hub menggunakan Jenkins Credentials
+        // Push Image ke Docker Hub menggunakan Jenkins Credentials (tanpa token di kode)
         stage('Push Image') {
             steps {
                 withCredentials([usernamePassword(
@@ -42,36 +42,41 @@ pipeline {
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker push $IMAGE:$TAG'
-                    sh 'docker push $IMAGE:latest'
+                    bat 'powershell -NoProfile -Command "$env:DOCKER_PASS | docker login -u $env:DOCKER_USER --password-stdin"'
+                    bat 'docker push %IMAGE%:%TAG%'
+                    bat 'docker push %IMAGE%:latest'
                 }
             }
         }
 
-        // Deploy dengan Docker Compose
+        // Deploy dengan Docker Compose menggunakan .env dari Jenkins Secret File
         stage('Deploy') {
             steps {
-                sh 'docker compose pull app'
-                sh 'docker compose up -d'
+                withCredentials([file(credentialsId: 'cucikilat-env', variable: 'ENV_FILE')]) {
+                    bat '''
+                        copy /Y "%ENV_FILE%" .env >nul
+                        docker compose pull app
+                        docker compose up -d
+                    '''
+                }
             }
         }
 
-        // Smoke Test: Memanggil endpoint /health (wajib HTTP 200)
+        // Smoke Test: Memanggil endpoint /health (pipeline gagal jika respons bukan HTTP 200)
         stage('Smoke Test') {
             steps {
-                sh 'sleep 15'
-                sh 'curl -fsS http://localhost:8000/health'
+                bat 'powershell -NoProfile -Command "Start-Sleep -Seconds 15"'
+                bat 'curl.exe -fsS http://localhost:8000/health'
             }
         }
     }
 
     post {
         success {
-            echo "Pipeline CuciKilat (K06) SUKSES: Aplikasi berhasil dideploy dan health check lulus."
+            echo "Pipeline CuciKilat (K06) SUKSES: Image ${env.IMAGE}:${env.TAG} ter-deploy dan /health lulus (HTTP 200)."
         }
         failure {
-            echo "Pipeline CuciKilat (K06) GAGAL: Cek stage yang merah pada Stage View."
+            echo "Pipeline CuciKilat (K06) GAGAL: Periksa stage yang merah pada Stage View."
         }
     }
 }
