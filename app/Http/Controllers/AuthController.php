@@ -46,7 +46,7 @@ class AuthController extends Controller
             ]);
         }
 
-        return redirect()->route('staff.orders.index')->with('success', 'Login berhasil. Selamat datang, ' . $user->name . '!');
+        return redirect()->route('staff.orders.index')->with('success', 'Login berhasil. Selamat datang, '.$user->name.'!');
     }
 
     public function logout(Request $request): JsonResponse|RedirectResponse
