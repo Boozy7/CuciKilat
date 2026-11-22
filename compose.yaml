@@ -1,6 +1,6 @@
 services:
   app:
-    image: boozy7/cucikilat:latest
+    image: azzhftr/cucikilat:latest
     container_name: cucikilat-app
     restart: unless-stopped
     ports:

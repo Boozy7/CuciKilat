@@ -120,13 +120,13 @@ Jalankan pemeriksaan format kode dengan Laravel Pint:
 Pastikan file `.env` sudah disalin dari `.env.example` dan diisi `APP_KEY` valid (`php artisan key:generate --show`) serta kredensial MySQL (`DB_USERNAME`, `DB_PASSWORD`, `DB_ROOT_PASSWORD`):
 ```powershell
 # 1. Stage Lint (Tantangan DevOps K06 — Pint)
-docker build --target lint -t boozy7/cucikilat:lint .
+docker build --target lint -t azzhftr/cucikilat:lint .
 
 # 2. Stage Test (Automated Test di dalam container)
-docker build --target test -t boozy7/cucikilat:test .
+docker build --target test -t azzhftr/cucikilat:test .
 
 # 3. Build Production Image & jalankan Compose
-docker build --target runner -t boozy7/cucikilat:latest .
+docker build --target runner -t azzhftr/cucikilat:latest .
 docker compose up -d
 docker compose ps
 curl.exe -i http://localhost:8000/health
@@ -134,5 +134,5 @@ curl.exe -i http://localhost:8000/health
 
 ### Konfigurasi Jenkins Credentials Wajib
 `Jenkinsfile` memakai perintah `bat` untuk agent Jenkins Windows dengan 7 stage (`Checkout` → `Lint` → `Test` → `Build Image` → `Push Image` → `Deploy` → `Smoke Test`). Sebelum menjalankan pipeline, buat 2 credentials di **Manage Jenkins → Credentials**:
-1. **`dockerhub-credentials`** (*Username with password*): Username Docker Hub (`boozy7`) dan Docker Hub Access Token (PAT).
+1. **`dockerhub-credentials`** (*Username with password*): Username Docker Hub (`azzhftr`) dan Docker Hub Access Token (PAT).
 2. **`cucikilat-env`** (*Secret file*): File `.env` produksi berisi `APP_KEY`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, dan `DB_ROOT_PASSWORD` (jangan pernah commit `.env` ke Git).

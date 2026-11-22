@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = 'boozy7/cucikilat'
+        IMAGE = 'azzhftr/cucikilat'
         TAG = "${env.BUILD_NUMBER}"
     }
 
