@@ -37,7 +37,8 @@
             <p class="text-xs text-gray-400 mt-1">Estimasi {{ $service->estimated_days }} hari</p>
 
             <div class="flex gap-2 mt-4">
-                <button onclick="openEditModal({{ $service->id }}, '{{ $service->code }}', '{{ addslashes($service->name) }}', '{{ $service->pricing_type->value }}', {{ $service->base_price }}, {{ $service->surcharge_percent }}, {{ $service->estimated_days }}, {{ $service->is_active ? 'true' : 'false' }})"
+                <button type="button"
+                        onclick="openEditModal({{ $service->id }}, {{ \Illuminate\Support\Js::from($service->code) }}, {{ \Illuminate\Support\Js::from($service->name) }}, {{ \Illuminate\Support\Js::from($service->pricing_type->value) }}, {{ $service->base_price }}, {{ $service->surcharge_percent }}, {{ $service->estimated_days }}, {{ $service->is_active ? 'true' : 'false' }})"
                         class="flex-1 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 py-1.5 rounded-lg text-xs font-semibold transition text-center">
                     ✏️ Edit
                 </button>
