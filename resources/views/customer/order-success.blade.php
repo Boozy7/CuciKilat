@@ -3,43 +3,47 @@
 @section('title', 'Order Berhasil')
 
 @section('content')
-<div class="max-w-lg mx-auto text-center">
-    <div class="bg-white rounded-xl shadow p-8 border">
-        <div class="text-5xl mb-4">✅</div>
-        <h1 class="text-2xl font-bold text-green-600 mb-2">Permintaan Jemput Berhasil!</h1>
-        <p class="text-gray-500 mb-6">Simpan kode order di bawah ini untuk melacak status cucian Anda.</p>
-
-        <div class="bg-blue-50 border-2 border-blue-200 rounded-xl py-4 px-6 mb-6">
-            <p class="text-xs text-blue-500 mb-1 font-semibold uppercase tracking-wider">Kode Order Anda</p>
-            <p class="text-3xl font-mono font-bold text-blue-700 tracking-widest">{{ $order->order_code }}</p>
+<div class="max-w-xl mx-auto">
+    <div class="bg-white rounded-lg border border-[#4A2018]/20 overflow-hidden">
+        <div class="bg-[#F7E8B5]/60 px-6 py-7 border-b border-[#4A2018]/15 text-center">
+            <p class="font-mono text-xs uppercase tracking-[0.2em] text-[#6B4C0B] mb-2">Konfirmasi Order</p>
+            <h1 class="font-display text-2xl sm:text-3xl text-[#4A2018] mb-1.5">Permintaan Jemput Berhasil!</h1>
+            <p class="text-sm text-[#7A4E45]">Simpan kode order di bawah ini untuk melacak progres cucian Anda.</p>
         </div>
 
-        <div class="text-left bg-gray-50 rounded-lg p-4 text-sm space-y-2 mb-6">
-            <div class="flex justify-between">
-                <span class="text-gray-500">Layanan:</span>
-                <span class="font-semibold">{{ $order->service->name }}</span>
+        <div class="p-6 sm:p-8">
+            <div class="bg-[#DCEAF4] border border-[#9EC5E0] rounded-lg py-5 px-6 text-center mb-6">
+                <p class="text-[11px] font-mono text-[#1F4A68] mb-1.5 font-semibold uppercase tracking-widest">Kode Order Anda</p>
+                <p class="text-2xl sm:text-3xl font-mono font-semibold text-[#4A2018] tracking-widest select-all">{{ $order->order_code }}</p>
             </div>
-            <div class="flex justify-between">
-                <span class="text-gray-500">Status:</span>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                    {{ $order->status->label() }}
-                </span>
-            </div>
-            <div class="flex justify-between">
-                <span class="text-gray-500">Berat & Tagihan:</span>
-                <span class="text-gray-400 italic">Akan muncul setelah dijemput & ditimbang</span>
-            </div>
-        </div>
 
-        <div class="flex flex-col sm:flex-row gap-3">
-            <a href="{{ route('orders.track', $order->order_code) }}"
-               class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold text-sm transition text-center">
-                🔍 Lacak Order Ini
-            </a>
-            <a href="{{ url('/') }}"
-               class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold text-sm transition text-center">
-                ← Kembali ke Beranda
-            </a>
+            <div class="bg-[#FAF8F4] border border-[#4A2018]/15 rounded-lg divide-y divide-[#4A2018]/10 text-sm mb-6">
+                <div class="px-4 py-3 flex items-center justify-between gap-4">
+                    <span class="text-[#7A4E45]">Layanan</span>
+                    <span class="font-semibold text-[#4A2018]">{{ $order->service->name }}</span>
+                </div>
+                <div class="px-4 py-3 flex items-center justify-between gap-4">
+                    <span class="text-[#7A4E45]">Status</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ $order->status->badgeClasses() }}">
+                        {{ $order->status->label() }}
+                    </span>
+                </div>
+                <div class="px-4 py-3 flex items-center justify-between gap-4">
+                    <span class="text-[#7A4E45]">Berat &amp; Tagihan</span>
+                    <span class="text-[#7A4E45] italic text-right">Akan muncul setelah dijemput &amp; ditimbang</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="{{ route('orders.track', $order->order_code) }}"
+                   class="flex-1 inline-flex items-center justify-center gap-2 bg-[#4A2018] hover:bg-[#33140E] text-[#FAF8F4] py-3 px-4 rounded-lg font-semibold text-sm transition-colors min-h-[44px]">
+                    Lacak Order Ini
+                </a>
+                <a href="{{ url('/') }}"
+                   class="flex-1 inline-flex items-center justify-center gap-2 bg-[#FAF8F4] hover:bg-[#F7E8B5] text-[#4A2018] border border-[#4A2018]/20 py-3 px-4 rounded-lg font-semibold text-sm transition-colors min-h-[44px]">
+                    Kembali ke Beranda
+                </a>
+            </div>
         </div>
     </div>
 </div>
