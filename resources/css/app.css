@@ -4,6 +4,51 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+    --ck-canvas: #FAF7F2;
+    --ck-panel: #F3ECE2;
+    --ck-surface: #FFFFFF;
+    --ck-mahogany: #5A271E;
+    --ck-mahogany-dark: #421B14;
+    --ck-mahogany-ink: #3B1A14;
+    --ck-mahogany-muted: #866962;
+    --ck-soft-blue: #7FB5D5;
+    --ck-soft-blue-tint: #E6F1F8;
+    --ck-soft-blue-ink: #1F4E6C;
+    --ck-soft-yellow: #F3D88B;
+    --ck-soft-yellow-tint: #FBF3D8;
+    --ck-soft-yellow-ink: #6B4D0E;
+}
+
+.ck-pinstripe-blue {
+    background-image: repeating-linear-gradient(
+        to right,
+        #DCEAF4 0px,
+        #DCEAF4 10px,
+        #EBF3F9 10px,
+        #EBF3F9 18px,
+        rgba(74, 32, 24, 0.08) 18px,
+        rgba(74, 32, 24, 0.08) 19px
+    );
+}
+
+.ck-card-shadow {
+    box-shadow: 0 8px 30px rgba(90, 39, 30, 0.05);
+}
+
+.ck-item-shadow {
+    box-shadow: 0 4px 16px rgba(90, 39, 30, 0.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

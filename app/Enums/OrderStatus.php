@@ -36,4 +36,15 @@ enum OrderStatus: string
     {
         return $this->next() === $target;
     }
+
+    public function badgeClasses(): string
+    {
+        return match ($this) {
+            self::WaitingPickup => 'bg-[#F7E8B5] text-[#6B4C0B] border border-[#E5CE82]',
+            self::PickedUp => 'bg-[#DCEAF4] text-[#1F4A68] border border-[#B5D3E8]',
+            self::Processing => 'bg-[#C8DFF0] text-[#183C56] border border-[#96BEDA]',
+            self::ReadyForDelivery => 'bg-[#EFE0A8] text-[#4A2018] border border-[#D4BC6A]',
+            self::Delivered => 'bg-[#4A2018] text-[#FAF8F4] border border-[#4A2018]',
+        };
+    }
 }
